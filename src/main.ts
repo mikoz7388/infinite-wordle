@@ -1,8 +1,7 @@
 import { COLS, ROWS } from './CONSTS';
 import { Store } from './store';
-import './style.css'
+import './style.css';
 import { View } from './view';
-
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -10,16 +9,18 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div id="game"></div>
     <div id="keyboard"></div>
   </div>
-`
+`;
 
 function init() {
- 
   const store = new Store();
   const view = new View();
 
-  view.renderBoard(ROWS,COLS);
+  console.log(store.getState());
+  view.renderBoard(ROWS, COLS);
+
+  window.addEventListener('keydown', (e) => {
+    store.keyDownHandler(e);
+  });
 }
 
-
-
-window.addEventListener("load", init);
+window.addEventListener('load', init);
