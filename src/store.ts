@@ -59,19 +59,11 @@ export class Store {
         if (answer.length > 1) return;
         if (regex.test(answer)) {
           this.saveState((prevState) => {
-            prevState.currentAnswer += answer.toLowerCase();
+            if (prevState.currentAnswer.length < 5)
+              prevState.currentAnswer += answer.toLowerCase();
             return prevState;
           });
         }
     }
-
-    // this.saveState((prevState) => {
-    //   if (prevState.currentAnswer.length < 5) {
-    //     prevState.currentAnswer += answer;
-    //     console.log(this.getState());
-    //     return prevState;
-    //   }
-    //   throw new Error('Answer is too long');
-    // });
   }
 }
