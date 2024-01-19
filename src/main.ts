@@ -1,4 +1,7 @@
+import { COLS, ROWS } from './CONSTS';
+import { Store } from './store';
 import './style.css'
+import { View } from './view';
 
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -9,3 +12,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   </div>
 `
 
+function init() {
+ 
+  const store = new Store();
+  const view = new View();
+
+  view.renderBoard(ROWS,COLS);
+}
+
+
+
+window.addEventListener("load", init);

@@ -1,0 +1,44 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  --color-main: rgba(255, 255, 255, 0.87);
+  --color-background: #121213;
+
+  --color-correct: #538d4e;
+  --color-present: #b59f3b;
+  --color-wrong: #3a3a3c;
+  --color-accent: #565758;
+
+  color-scheme: light dark;
+  color: var(--color-main);
+  background-color: var(--color-background);
+}
+
+#game {
+  text-align: center;
+  width: fit-content;
+  margin: 2rem auto;
+  display: grid;
+  gap: 5px;
+}
+
+.row {
+  display: flex;
+  gap: 5px;
+}
+
+.cell {
+  display: flex;
+  place-content: center;
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: solid 2px var(--color-accent);
+  text-transform: uppercase;
+  font-size: 2rem;
+  line-height: 60px;
+  font-weight: bold;
+  transition: rotateRow 1s linear;
+}
