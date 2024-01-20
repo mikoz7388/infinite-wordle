@@ -16,7 +16,7 @@ function init() {
   const view = new View();
 
   console.log(store.getState());
-  view.renderBoard(ROWS, COLS);
+  view.renderBoard(ROWS, COLS, store.getState());
 
   window.addEventListener('keydown', (e) => {
     store.keyDownHandler(e);

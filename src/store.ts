@@ -1,8 +1,10 @@
-type gameState = { currentAnswer: string; allAnswers: string[] };
+import { View } from './view';
+
+export type gameState = { currentAnswer: string; allAnswers: string[] };
 
 let testState: gameState = {
   currentAnswer: '',
-  allAnswers: ['test'],
+  allAnswers: ['test1', 'test2', 'test3', 'test4', 'test5'],
 };
 
 const initialState: gameState = {
