@@ -1,4 +1,3 @@
-import { COLS, ROWS } from './CONSTS';
 import { gameState } from './store';
 
 export class View {
@@ -27,15 +26,14 @@ export class View {
   }
 
   fillCells(game: HTMLDivElement, state: gameState) {
-    const cells = this.game.querySelectorAll('.cell');
-    console.log(cells[0]);
-    const answers = state.allAnswers.concat(state.currentAnswer);
-    console.log(answers);
+    const cells = game.querySelectorAll('.cell');
+    console.log(cells);
 
-    for (let i = 0; i < ROWS; i++) {
-      for (let j = 0; j < COLS; j++) {
-        cells[i];
-      }
+    const answersString = state.allAnswers.concat(state.currentAnswer).join('');
+    console.log(answersString);
+
+    for (let i = 0; i < answersString.length; i++) {
+      cells[i].innerHTML = answersString[i];
     }
   }
 }

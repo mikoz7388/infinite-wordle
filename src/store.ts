@@ -1,10 +1,8 @@
-import { View } from './view';
-
 export type gameState = { currentAnswer: string; allAnswers: string[] };
 
 let testState: gameState = {
   currentAnswer: '',
-  allAnswers: ['test1', 'test2', 'test3', 'test4', 'test5'],
+  allAnswers: [],
 };
 
 const initialState: gameState = {
@@ -12,9 +10,12 @@ const initialState: gameState = {
   allAnswers: [],
 };
 
-export class Store {
-  constructor(private storageKey = 'wordle') {
-    this.storageKey = storageKey;
+export class Store extends EventTarget {
+  private storageKey = 'wordle';
+
+  constructor(storageKey?: string) {
+    super();
+    if (storageKey) this.storageKey = storageKey;
   }
 
   saveState(stateOrFn: gameState | ((prevState: gameState) => gameState)) {
@@ -35,6 +36,7 @@ export class Store {
     // window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
     testState = newState;
     console.log(testState);
+    this.dispatchEvent(new Event('statechanged'));
   }
 
   getState(): gameState {
@@ -44,6 +46,10 @@ export class Store {
   }
 
   keyDownHandler(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      this.submitAnswer();
+      return;
+    }
     this.updateCurrentAnswer(e.key);
   }
 
@@ -67,5 +73,13 @@ export class Store {
           });
         }
     }
+  }
+  submitAnswer() {
+    if (this.getState().currentAnswer.length !== 5) return;
+    this.saveState((prevState) => {
+      prevState.allAnswers.push(prevState.currentAnswer);
+      prevState.currentAnswer = '';
+      return prevState;
+    });
   }
 }
