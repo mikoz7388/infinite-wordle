@@ -1,14 +1,21 @@
-export type gameState = { currentAnswer: string; allAnswers: string[] };
+import { words } from './words';
+
+export type gameState = {
+  currentAnswer: string;
+  correctAnswer: string;
+  allAnswers: string[];
+};
 
 let testState: gameState = {
+  correctAnswer: '',
   currentAnswer: '',
   allAnswers: [],
 };
 
-const initialState: gameState = {
-  currentAnswer: '',
-  allAnswers: [],
-};
+// const initialState: gameState = {
+//   currentAnswer: '',
+//   allAnswers: [],
+// };
 
 export class Store extends EventTarget {
   private storageKey = 'wordle';
@@ -81,5 +88,14 @@ export class Store extends EventTarget {
       prevState.currentAnswer = '';
       return prevState;
     });
+  }
+
+  generateRandomAnswer() {
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    this.saveState((prevState) => {
+      prevState.correctAnswer = randomWord;
+      return prevState;
+    });
+    console.log(this.getState().correctAnswer);
   }
 }
