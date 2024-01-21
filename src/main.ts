@@ -15,6 +15,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 function init() {
   const store = new Store();
   const view = new View();
+
+  store.generateRandomAnswer();
   view.renderBoard(ROWS, COLS, store.getState());
 
   store.addEventListener('statechanged', () => {

@@ -17,6 +17,7 @@ export class View {
       this.game.appendChild(row);
     }
     this.fillCells(this.game, state);
+    state.isGameOver ? alert('Game Over!') : null;
   }
   bindKeyBoard(handler: (e: KeyboardEvent) => void) {
     window.addEventListener('keydown', handler);
@@ -27,10 +28,8 @@ export class View {
 
   fillCells(game: HTMLDivElement, state: gameState) {
     const cells = game.querySelectorAll('.cell');
-    console.log(cells);
 
     const answersString = state.allAnswers.concat(state.currentAnswer).join('');
-    console.log(answersString);
 
     for (let i = 0; i < answersString.length; i++) {
       cells[i].innerHTML = answersString[i];

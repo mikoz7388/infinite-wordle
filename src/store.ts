@@ -1,6 +1,8 @@
+import { ROWS } from './CONSTS';
 import { words } from './words';
 
 export type gameState = {
+  isGameOver?: boolean;
   currentAnswer: string;
   correctAnswer: string;
   allAnswers: string[];
@@ -42,7 +44,6 @@ export class Store extends EventTarget {
     }
     // window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
     testState = newState;
-    console.log(testState);
     this.dispatchEvent(new Event('statechanged'));
   }
 
@@ -82,20 +83,39 @@ export class Store extends EventTarget {
     }
   }
   submitAnswer() {
-    if (this.getState().currentAnswer.length !== 5) return;
-    this.saveState((prevState) => {
-      prevState.allAnswers.push(prevState.currentAnswer);
-      prevState.currentAnswer = '';
-      return prevState;
-    });
+    const stateClone = structuredClone(this.getState());
+    if (stateClone.currentAnswer.length !== 5) return;
+
+    if (this.checkAnswer()) alert('You win!');
+    stateClone.allAnswers.push(stateClone.currentAnswer);
+    stateClone.currentAnswer = '';
+    this.saveState(stateClone);
+    this.isGameOver();
+  }
+
+  isGameOver() {
+    const stateClone = structuredClone(this.getState());
+
+    stateClone.isGameOver = stateClone.allAnswers.length === ROWS;
+    this.saveState(stateClone);
+  }
+
+  checkAnswer() {
+    const { currentAnswer, correctAnswer } = this.getState();
+    return currentAnswer === correctAnswer;
   }
 
   generateRandomAnswer() {
-    const randomWord = words[Math.floor(Math.random() * words.length)];
-    this.saveState((prevState) => {
-      prevState.correctAnswer = randomWord;
-      return prevState;
-    });
-    console.log(this.getState().correctAnswer);
+    const stateClone = structuredClone(this.getState());
+    stateClone.correctAnswer = words[Math.floor(Math.random() * words.length)];
+    this.saveState(stateClone);
+  }
+
+  reset() {
+    const stateClone = structuredClone(this.getState());
+    stateClone.currentAnswer = '';
+    stateClone.allAnswers = [];
+    this.generateRandomAnswer();
+    this.saveState(stateClone);
   }
 }
