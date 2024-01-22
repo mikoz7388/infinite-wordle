@@ -11,6 +11,6 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "semi": ["error", "warn"]
+    "semi": "warn"
   }
 }

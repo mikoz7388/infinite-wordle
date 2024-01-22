@@ -18,12 +18,16 @@ function init() {
 
   store.generateRandomAnswer();
   view.renderBoard(ROWS, COLS, store.getState());
+  view.createKeyboard();
+  view.bindKeyboardClick((e) => {
+    store.keyboardClickHandler(e);
+  });
+  view.bindKeyboard((e) => {
+    store.keyDownHandler(e);
+  });
 
   store.addEventListener('statechanged', () => {
     view.renderBoard(ROWS, COLS, store.getState());
-  });
-  window.addEventListener('keydown', (e) => {
-    store.keyDownHandler(e);
   });
 }
 

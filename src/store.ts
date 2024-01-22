@@ -61,12 +61,35 @@ export class Store extends EventTarget {
 
   keyDownHandler(e: KeyboardEvent) {
     if (e.key === 'Enter') {
-      this.defineCellsColors();
       this.submitAnswer();
+      this.defineCellsColors();
       this.isGameOver();
       return;
     }
     this.updateCurrentAnswer(e.key);
+  }
+
+  keyboardClickHandler(e: MouseEvent) {
+    const target = e.target;
+
+    if (target instanceof SVGElement) {
+      this.updateCurrentAnswer('Backspace');
+      return;
+    }
+
+    if (!(target instanceof HTMLButtonElement)) return;
+    if (!target.textContent) return;
+    if (target.textContent === 'Enter') {
+      this.submitAnswer();
+      this.defineCellsColors();
+      this.isGameOver();
+      return;
+    }
+    if (target.textContent === 'Backspace') {
+      this.updateCurrentAnswer(target.textContent);
+      return;
+    }
+    this.updateCurrentAnswer(target.textContent);
   }
 
   updateCurrentAnswer(answer: string) {
@@ -90,6 +113,7 @@ export class Store extends EventTarget {
   submitAnswer() {
     const stateClone = structuredClone(this.getState());
     if (stateClone.currentAnswer.length !== 5) return;
+    stateClone.cellsColors = this.defineCellsColors();
     if (this.checkAnswer()) alert('You win!');
     stateClone.allAnswers.push(stateClone.currentAnswer);
     stateClone.currentAnswer = '';
@@ -115,21 +139,23 @@ export class Store extends EventTarget {
   }
 
   defineCellsColors() {
-    const stateClone = structuredClone(this.getState());
-    const currentAnswer = stateClone.currentAnswer;
-    const correctAnswer = stateClone.correctAnswer;
-    if (!stateClone.cellsColors) stateClone.cellsColors = [];
+    const {
+      cellsColors = [],
+      correctAnswer,
+      currentAnswer,
+    } = structuredClone(this.getState());
+
     for (let i = 0; i < currentAnswer.length; i++) {
       if (!correctAnswer.includes(currentAnswer[i])) {
-        stateClone.cellsColors.push('wrong');
+        cellsColors.push('wrong');
       }
       if (currentAnswer[i] === correctAnswer[i]) {
-        stateClone.cellsColors.push('right');
+        cellsColors.push('right');
       } else if (correctAnswer.includes(currentAnswer[i])) {
-        stateClone.cellsColors.push('misplaced');
+        cellsColors.push('misplaced');
       }
     }
-    this.saveState(stateClone);
+    return cellsColors;
   }
 
   reset() {

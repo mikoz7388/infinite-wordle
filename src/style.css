@@ -54,3 +54,35 @@
 .misplaced {
   background-color: var(--color-present);
 }
+
+#keyboard {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#keyboard div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+#keyboard div button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 1.25em;
+  height: 58px;
+  min-width: 43px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#keyboard div:last-of-type button:last-of-type,
+#keyboard div:last-of-type button:first-of-type {
+  aspect-ratio: 2/1;
+}
