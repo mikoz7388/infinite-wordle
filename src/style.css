@@ -42,3 +42,15 @@
   font-weight: bold;
   transition: rotateRow 1s linear;
 }
+
+.wrong {
+  background-color: var(--color-wrong);
+}
+
+.right {
+  background-color: var(--color-correct);
+}
+
+.misplaced {
+  background-color: var(--color-present);
+}

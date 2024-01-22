@@ -5,6 +5,7 @@ export class View {
   keyboard: HTMLDivElement = document.querySelector('#keyboard')!;
 
   renderBoard(rows: number, cols: number, state: gameState) {
+    console.log(state);
     this.game.innerHTML = '';
     for (let i = 0; i < rows; i++) {
       const row = document.createElement('div');
@@ -12,6 +13,7 @@ export class View {
       for (let j = 0; j < cols; j++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
+        cell.classList.add(state.cellsColors[i * 5 + j]);
         row.appendChild(cell);
       }
       this.game.appendChild(row);

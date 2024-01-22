@@ -1,17 +1,21 @@
 import { ROWS } from './CONSTS';
 import { words } from './words';
 
+type cellColor = 'right' | 'wrong' | 'misplaced';
 export type gameState = {
-  isGameOver?: boolean;
+  isGameOver: boolean;
   currentAnswer: string;
   correctAnswer: string;
   allAnswers: string[];
+  cellsColors: cellColor[];
 };
 
-let testState: gameState = {
+const testState: gameState = {
+  isGameOver: false,
   correctAnswer: '',
   currentAnswer: '',
   allAnswers: [],
+  cellsColors: [],
 };
 
 // const initialState: gameState = {
@@ -21,10 +25,12 @@ let testState: gameState = {
 
 export class Store extends EventTarget {
   private storageKey = 'wordle';
+  state: gameState;
 
   constructor(storageKey?: string) {
     super();
     if (storageKey) this.storageKey = storageKey;
+    this.state = testState;
   }
 
   saveState(stateOrFn: gameState | ((prevState: gameState) => gameState)) {
@@ -43,19 +49,21 @@ export class Store extends EventTarget {
         throw new Error('Invalid argument passed to saveState');
     }
     // window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
-    testState = newState;
+    this.state = newState;
     this.dispatchEvent(new Event('statechanged'));
   }
 
   getState(): gameState {
-    return testState;
+    return this.state;
     // const item = window.localStorage.getItem(this.storageKey);
     // return item ? JSON.parse(item) : initialState;
   }
 
   keyDownHandler(e: KeyboardEvent) {
     if (e.key === 'Enter') {
+      this.defineCellsColors();
       this.submitAnswer();
+      this.isGameOver();
       return;
     }
     this.updateCurrentAnswer(e.key);
@@ -63,34 +71,29 @@ export class Store extends EventTarget {
 
   updateCurrentAnswer(answer: string) {
     const regex = /[a-z]/i;
+    const stateClone = structuredClone(this.getState());
 
     switch (answer) {
       case 'Backspace':
-        this.saveState((prevState) => {
-          prevState.currentAnswer = prevState.currentAnswer.slice(0, -1);
-          return prevState;
-        });
+        stateClone.currentAnswer = stateClone.currentAnswer.slice(0, -1);
         break;
       default:
         if (answer.length > 1) return;
         if (regex.test(answer)) {
-          this.saveState((prevState) => {
-            if (prevState.currentAnswer.length < 5)
-              prevState.currentAnswer += answer.toLowerCase();
-            return prevState;
-          });
+          if (stateClone.currentAnswer.length < 5)
+            stateClone.currentAnswer += answer.toLowerCase();
         }
     }
+    this.saveState(stateClone);
   }
+
   submitAnswer() {
     const stateClone = structuredClone(this.getState());
     if (stateClone.currentAnswer.length !== 5) return;
-
     if (this.checkAnswer()) alert('You win!');
     stateClone.allAnswers.push(stateClone.currentAnswer);
     stateClone.currentAnswer = '';
     this.saveState(stateClone);
-    this.isGameOver();
   }
 
   isGameOver() {
@@ -108,6 +111,24 @@ export class Store extends EventTarget {
   generateRandomAnswer() {
     const stateClone = structuredClone(this.getState());
     stateClone.correctAnswer = words[Math.floor(Math.random() * words.length)];
+    this.saveState(stateClone);
+  }
+
+  defineCellsColors() {
+    const stateClone = structuredClone(this.getState());
+    const currentAnswer = stateClone.currentAnswer;
+    const correctAnswer = stateClone.correctAnswer;
+    if (!stateClone.cellsColors) stateClone.cellsColors = [];
+    for (let i = 0; i < currentAnswer.length; i++) {
+      if (!correctAnswer.includes(currentAnswer[i])) {
+        stateClone.cellsColors.push('wrong');
+      }
+      if (currentAnswer[i] === correctAnswer[i]) {
+        stateClone.cellsColors.push('right');
+      } else if (correctAnswer.includes(currentAnswer[i])) {
+        stateClone.cellsColors.push('misplaced');
+      }
+    }
     this.saveState(stateClone);
   }
 
