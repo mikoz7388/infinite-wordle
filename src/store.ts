@@ -18,11 +18,6 @@ const testState: gameState = {
   cellsColors: [],
 };
 
-// const initialState: gameState = {
-//   currentAnswer: '',
-//   allAnswers: [],
-// };
-
 export class Store extends EventTarget {
   private storageKey = 'wordle';
   state: gameState;
@@ -62,8 +57,6 @@ export class Store extends EventTarget {
   keyDownHandler(e: KeyboardEvent) {
     if (e.key === 'Enter') {
       this.submitAnswer();
-      this.defineCellsColors();
-      this.isGameOver();
       return;
     }
     this.updateCurrentAnswer(e.key);
@@ -81,8 +74,6 @@ export class Store extends EventTarget {
     if (!target.textContent) return;
     if (target.textContent === 'Enter') {
       this.submitAnswer();
-      this.defineCellsColors();
-      this.isGameOver();
       return;
     }
     if (target.textContent === 'Backspace') {
@@ -111,10 +102,16 @@ export class Store extends EventTarget {
   }
 
   submitAnswer() {
+    console.log('submit');
     const stateClone = structuredClone(this.getState());
     if (stateClone.currentAnswer.length !== 5) return;
+    if (!this.isCurrentAnswerInWords()) {
+      this.animateShakeRow();
+      return;
+    }
+
     stateClone.cellsColors = this.defineCellsColors();
-    if (this.checkAnswer()) alert('You win!');
+    if (this.isAnswerCorrect()) alert('You win!');
     stateClone.allAnswers.push(stateClone.currentAnswer);
     stateClone.currentAnswer = '';
     this.saveState(stateClone);
@@ -127,11 +124,15 @@ export class Store extends EventTarget {
     this.saveState(stateClone);
   }
 
-  checkAnswer() {
+  isCurrentAnswerInWords() {
+    const { currentAnswer } = this.getState();
+    return words.includes(currentAnswer);
+  }
+
+  isAnswerCorrect() {
     const { currentAnswer, correctAnswer } = this.getState();
     return currentAnswer === correctAnswer;
   }
-
   generateRandomAnswer() {
     const stateClone = structuredClone(this.getState());
     stateClone.correctAnswer = words[Math.floor(Math.random() * words.length)];
@@ -158,10 +159,24 @@ export class Store extends EventTarget {
     return cellsColors;
   }
 
+  animateShakeRow() {
+    console.log('animate');
+    const { allAnswers } = this.getState();
+    const rows = document.querySelectorAll('.row');
+    const currentRow = allAnswers.length;
+    rows[currentRow].classList.add('shake');
+    setTimeout(() => {
+      rows[currentRow].classList.remove('shake');
+    }, 500);
+    console.log(rows[currentRow]);
+  }
+
   reset() {
     const stateClone = structuredClone(this.getState());
     stateClone.currentAnswer = '';
     stateClone.allAnswers = [];
+    stateClone.cellsColors = [];
+    stateClone.isGameOver = false;
     this.generateRandomAnswer();
     this.saveState(stateClone);
   }

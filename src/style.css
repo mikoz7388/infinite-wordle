@@ -86,3 +86,28 @@
 #keyboard div:last-of-type button:first-of-type {
   aspect-ratio: 2/1;
 }
+
+@keyframes shakeRow {
+  0% {
+    translate: 0;
+  }
+  10% {
+    translate: 5px;
+  }
+  20% {
+    translate: -5px;
+  }
+  50% {
+    translate: 5px;
+  }
+  80% {
+    translate: -5px;
+  }
+  100% {
+    translate: 0px;
+  }
+}
+
+.shake {
+  animation: shakeRow 200ms linear;
+}
