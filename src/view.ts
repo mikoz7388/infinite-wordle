@@ -1,11 +1,11 @@
-import { DeleteIcon, QWERTY } from './CONSTS';
+import { COLS, DeleteIcon, QWERTY, ROWS } from './CONSTS';
 import { gameState } from './store';
 
 export class View {
   game: HTMLDivElement = document.querySelector('#game')!;
   keyboard: HTMLDivElement = document.querySelector('#keyboard')!;
 
-  renderBoard(rows: number, cols: number, state: gameState) {
+  renderBoard(rows: number, cols: number) {
     this.game.innerHTML = '';
     for (let i = 0; i < rows; i++) {
       const row = document.createElement('div');
@@ -13,13 +13,10 @@ export class View {
       for (let j = 0; j < cols; j++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
-        cell.classList.add(state.cellsColors[i * 5 + j]);
         row.appendChild(cell);
       }
       this.game.appendChild(row);
     }
-    this.fillCells(this.game, state);
-    state.isGameOver ? alert('Game Over!') : null;
   }
   bindKeyboard(handler: (e: KeyboardEvent) => void) {
     window.addEventListener('keydown', handler);
@@ -33,11 +30,20 @@ export class View {
 
     const answersString = state.allAnswers.concat(state.currentAnswer).join('');
 
-    for (let i = 0; i < answersString.length; i++) {
-      cells[i].innerHTML = answersString[i];
+    for (let i = 0; i < ROWS; i++) {
+      for (let j = 0; j < COLS; j++) {
+        const cellIndex = i * COLS + j;
+        if (cellIndex >= state.allAnswers.length * COLS)
+          cells[i * COLS + j].innerHTML = answersString[i * COLS + j] || '';
+      }
     }
+    console.log('fillCells', answersString);
   }
 
+  updateBoard(state: gameState) {
+    this.fillCells(this.game, state);
+    state.isGameOver ? alert('Game Over!') : null;
+  }
   createKeyboard() {
     QWERTY.forEach((row, index) => {
       const keyboardRow = document.createElement('div');
@@ -59,5 +65,11 @@ export class View {
       }
       this.keyboard.appendChild(keyboardRow);
     });
+  }
+
+  updateScreenKeyboardColors(state: gameState) {
+    const keys = this.keyboard.querySelectorAll('button');
+    console.log(keys[1].textContent);
+    return state;
   }
 }
