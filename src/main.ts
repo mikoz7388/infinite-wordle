@@ -17,7 +17,7 @@ function init() {
   const view = new View();
 
   store.generateRandomAnswer();
-  view.renderBoard(ROWS, COLS, store.getState());
+  view.renderBoard(ROWS, COLS);
   view.createKeyboard();
   view.bindKeyboardClick((e) => {
     store.keyboardClickHandler(e);
@@ -27,7 +27,10 @@ function init() {
   });
 
   store.addEventListener('statechanged', () => {
-    view.renderBoard(ROWS, COLS, store.getState());
+    view.updateBoard(store.getState());
+  });
+  store.addEventListener('answersubmitted', () => {
+    view.updateScreenKeyboardColors(store.getState());
   });
 }
 

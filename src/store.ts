@@ -30,8 +30,7 @@ export class Store extends EventTarget {
 
   saveState(stateOrFn: gameState | ((prevState: gameState) => gameState)) {
     const prevState = this.getState();
-
-    let newState;
+    let newState: gameState;
 
     switch (typeof stateOrFn) {
       case 'function':
@@ -115,6 +114,8 @@ export class Store extends EventTarget {
     stateClone.allAnswers.push(stateClone.currentAnswer);
     stateClone.currentAnswer = '';
     this.saveState(stateClone);
+
+    this.dispatchEvent(new Event('answersubmitted'));
   }
 
   isGameOver() {
@@ -160,7 +161,6 @@ export class Store extends EventTarget {
   }
 
   animateShakeRow() {
-    console.log('animate');
     const { allAnswers } = this.getState();
     const rows = document.querySelectorAll('.row');
     const currentRow = allAnswers.length;
@@ -168,7 +168,6 @@ export class Store extends EventTarget {
     setTimeout(() => {
       rows[currentRow].classList.remove('shake');
     }, 500);
-    console.log(rows[currentRow]);
   }
 
   reset() {
