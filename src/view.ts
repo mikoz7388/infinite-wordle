@@ -37,7 +37,6 @@ export class View {
           cells[i * COLS + j].innerHTML = answersString[i * COLS + j] || '';
       }
     }
-    console.log('fillCells', answersString);
   }
 
   updateBoard(state: gameState) {

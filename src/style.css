@@ -16,6 +16,11 @@
   background-color: var(--color-background);
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 #game {
   text-align: center;
   width: fit-content;
@@ -110,4 +115,15 @@
 
 .shake {
   animation: shakeRow 200ms linear;
+}
+
+header {
+  width: 100vw;
+  border-bottom: solid 1px var(--color-accent);
+}
+
+h1 {
+  font-size: 2em;
+  line-height: 1.1;
+  text-align: center;
 }

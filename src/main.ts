@@ -5,8 +5,9 @@ import { View } from './view';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
+  <header> <h1>Wordle</h1> 
   <button id="reset">Reset</button>
-    <h1>wordle</h1>
+  </header>
     <div id="game"></div>
     <div id="keyboard"></div>
   </div>
