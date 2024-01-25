@@ -44,7 +44,8 @@ export class Store extends EventTarget {
     }
     // window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
     this.state = newState;
-    this.dispatchEvent(new Event('statechanged'));
+    this.dispatchEvent(new Event('state-changed'));
+    console.log('newState', newState);
   }
 
   getState(): gameState {
@@ -103,9 +104,8 @@ export class Store extends EventTarget {
   submitAnswer() {
     console.log('submit');
     const stateClone = structuredClone(this.getState());
-    if (stateClone.currentAnswer.length !== 5) return;
     if (!this.isCurrentAnswerInWords()) {
-      this.animateShakeRow();
+      this.dispatchEvent(new Event('invalid-answer'));
       return;
     }
 
@@ -115,7 +115,7 @@ export class Store extends EventTarget {
     stateClone.currentAnswer = '';
     this.saveState(stateClone);
 
-    this.dispatchEvent(new Event('answersubmitted'));
+    this.dispatchEvent(new Event('answer-submitted'));
   }
 
   isGameOver() {
@@ -127,6 +127,7 @@ export class Store extends EventTarget {
 
   isCurrentAnswerInWords() {
     const { currentAnswer } = this.getState();
+    if (currentAnswer.length !== 5) return false;
     return words.includes(currentAnswer);
   }
 
@@ -158,16 +159,6 @@ export class Store extends EventTarget {
       }
     }
     return cellsColors;
-  }
-
-  animateShakeRow() {
-    const { allAnswers } = this.getState();
-    const rows = document.querySelectorAll('.row');
-    const currentRow = allAnswers.length;
-    rows[currentRow].classList.add('shake');
-    setTimeout(() => {
-      rows[currentRow].classList.remove('shake');
-    }, 500);
   }
 
   reset() {

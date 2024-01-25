@@ -2,11 +2,20 @@ import { COLS, DeleteIcon, QWERTY, ROWS } from './CONSTS';
 import { gameState } from './store';
 
 export class View {
-  game: HTMLDivElement = document.querySelector('#game')!;
-  keyboard: HTMLDivElement = document.querySelector('#keyboard')!;
+  private board: HTMLDivElement;
+  private keyboard: HTMLDivElement;
 
+  constructor() {
+    const board = document.querySelector<HTMLDivElement>('#board');
+    const keyboard = document.querySelector<HTMLDivElement>('#keyboard');
+    if (!board || !keyboard) {
+      throw new Error('No element with id board or keyboard');
+    }
+    this.board = board;
+    this.keyboard = keyboard;
+  }
   renderBoard(rows: number, cols: number) {
-    this.game.innerHTML = '';
+    this.board.innerHTML = '';
     for (let i = 0; i < rows; i++) {
       const row = document.createElement('div');
       row.classList.add('row');
@@ -15,7 +24,7 @@ export class View {
         cell.classList.add('cell');
         row.appendChild(cell);
       }
-      this.game.appendChild(row);
+      this.board.appendChild(row);
     }
   }
   bindKeyboard(handler: (e: KeyboardEvent) => void) {
@@ -25,23 +34,18 @@ export class View {
     this.keyboard.addEventListener('click', handler);
   }
 
-  fillCells(game: HTMLDivElement, state: gameState) {
-    const cells = game.querySelectorAll('.cell');
+  updateBoard(state: gameState) {
+    const cells = this.board.querySelectorAll('.cell');
 
     const answersString = state.allAnswers.concat(state.currentAnswer).join('');
-
+    console.log('answersString', answersString);
     for (let i = 0; i < ROWS; i++) {
       for (let j = 0; j < COLS; j++) {
-        const cellIndex = i * COLS + j;
+        const cellIndex = i * COLS + j - 1;
         if (cellIndex >= state.allAnswers.length * COLS)
-          cells[i * COLS + j].innerHTML = answersString[i * COLS + j] || '';
+          cells[cellIndex].innerHTML = answersString[cellIndex] || '';
       }
     }
-  }
-
-  updateBoard(state: gameState) {
-    this.fillCells(this.game, state);
-    state.isGameOver ? alert('Game Over!') : null;
   }
   createKeyboard() {
     QWERTY.forEach((row, index) => {
@@ -70,5 +74,14 @@ export class View {
     const keys = this.keyboard.querySelectorAll('button');
     console.log(keys[1].textContent);
     return state;
+  }
+
+  animateShakeRow({ allAnswers }: gameState) {
+    const rows = document.querySelectorAll('.row');
+    const currentRow = allAnswers.length;
+    rows[currentRow].classList.add('shake');
+    setTimeout(() => {
+      rows[currentRow].classList.remove('shake');
+    }, 500);
   }
 }

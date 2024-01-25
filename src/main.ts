@@ -8,7 +8,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <header> <h1>Wordle</h1> 
   <button id="reset">Reset</button>
   </header>
-    <div id="game"></div>
+    <div id="board"></div>
     <div id="keyboard"></div>
   </div>
 `;
@@ -27,11 +27,14 @@ function init() {
     store.keyDownHandler(e);
   });
 
-  store.addEventListener('statechanged', () => {
+  store.addEventListener('state-changed', () => {
     view.updateBoard(store.getState());
   });
-  store.addEventListener('answersubmitted', () => {
+  store.addEventListener('answer-submitted', () => {
     view.updateScreenKeyboardColors(store.getState());
+  });
+  store.addEventListener('invalid-answer', () => {
+    view.animateShakeRow(store.getState());
   });
 }
 
