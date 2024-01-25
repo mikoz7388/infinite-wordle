@@ -1,5 +1,6 @@
-import { COLS, DeleteIcon, QWERTY, ROWS } from './CONSTS';
+import { DeleteIcon, QWERTY } from './CONSTS';
 import { gameState } from './store';
+import { clearAnimation } from './utils';
 
 export class View {
   private board: HTMLDivElement;
@@ -22,6 +23,7 @@ export class View {
       for (let j = 0; j < cols; j++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
+        cell.setAttribute('data-state', 'empty');
         row.appendChild(cell);
       }
       this.board.appendChild(row);
@@ -35,18 +37,32 @@ export class View {
   }
 
   updateBoard(state: gameState) {
-    const cells = this.board.querySelectorAll('.cell');
+    const rows = this.board.querySelectorAll<HTMLDivElement>('.row');
+    const cells = Array.from(
+      rows[state.allAnswers.length].querySelectorAll<HTMLDivElement>('.cell')
+    );
 
-    const answersString = state.allAnswers.concat(state.currentAnswer).join('');
-    console.log('answersString', answersString);
-    for (let i = 0; i < ROWS; i++) {
-      for (let j = 0; j < COLS; j++) {
-        const cellIndex = i * COLS + j - 1;
-        if (cellIndex >= state.allAnswers.length * COLS)
-          cells[cellIndex].innerHTML = answersString[cellIndex] || '';
+    cells.forEach((cell, index) => {
+      if (index === state.currentAnswer.length - 1 && cell.innerHTML === '') {
+        this.animateLetterEntered(cell);
       }
-    }
+      if (state.currentAnswer[index]) {
+        cell.innerHTML = state.currentAnswer[index];
+        cell.setAttribute('data-state', 'tbd');
+        return;
+      }
+      cell.innerHTML = '';
+      cell.setAttribute('data-state', 'empty');
+    });
   }
+  animateLetterEntered(cell: HTMLDivElement) {
+    cell.style.animationName = 'letterEntered';
+    cell.style.animationDuration = '100ms';
+    cell.style.animationTimingFunction = 'ease-out';
+
+    setTimeout(() => clearAnimation(cell), 200);
+  }
+
   createKeyboard() {
     QWERTY.forEach((row, index) => {
       const keyboardRow = document.createElement('div');
@@ -71,17 +87,19 @@ export class View {
   }
 
   updateScreenKeyboardColors(state: gameState) {
-    const keys = this.keyboard.querySelectorAll('button');
-    console.log(keys[1].textContent);
+    // const keys = this.keyboard.querySelectorAll('button');
     return state;
   }
 
   animateShakeRow({ allAnswers }: gameState) {
-    const rows = document.querySelectorAll('.row');
-    const currentRow = allAnswers.length;
-    rows[currentRow].classList.add('shake');
+    const rows = document.querySelectorAll<HTMLDivElement>('.row');
+    const row = rows[allAnswers.length];
+    row.style.animationName = 'shakeRow';
+    row.style.animationDuration = '200ms';
+    row.style.animationTimingFunction = 'ease-out';
+
     setTimeout(() => {
-      rows[currentRow].classList.remove('shake');
+      clearAnimation(row);
     }, 500);
   }
 }

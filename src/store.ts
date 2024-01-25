@@ -45,7 +45,6 @@ export class Store extends EventTarget {
     // window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
     this.state = newState;
     this.dispatchEvent(new Event('state-changed'));
-    console.log('newState', newState);
   }
 
   getState(): gameState {
@@ -102,7 +101,6 @@ export class Store extends EventTarget {
   }
 
   submitAnswer() {
-    console.log('submit');
     const stateClone = structuredClone(this.getState());
     if (!this.isCurrentAnswerInWords()) {
       this.dispatchEvent(new Event('invalid-answer'));

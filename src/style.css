@@ -47,6 +47,9 @@ body {
   font-weight: bold;
   transition: rotateRow 1s linear;
 }
+.cell[data-state='tbd'] {
+  border-color: var(--color-wrong);
+}
 
 .wrong {
   background-color: var(--color-wrong);
@@ -113,10 +116,6 @@ body {
   }
 }
 
-.shake {
-  animation: shakeRow 200ms linear;
-}
-
 header {
   width: 100vw;
   border-bottom: solid 1px var(--color-accent);
@@ -126,4 +125,19 @@ h1 {
   font-size: 2em;
   line-height: 1.1;
   text-align: center;
+}
+
+@keyframes letterEntered {
+  from {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
