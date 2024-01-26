@@ -98,7 +98,7 @@ export class View {
     cells.forEach((cell, index) => {
       const animationDuration = ROTATE_ROW_ANIMATION_DURATION * index;
       cell.style.animationName = 'rotateRow';
-      cell.style.animationDuration = '250ms';
+      cell.style.animationDuration = `${ROTATE_ROW_ANIMATION_DURATION}ms`;
       cell.style.animationTimingFunction = 'ease-out';
       cell.style.animationDelay = `${animationDuration}ms`;
       setTimeout(() => clearAnimation(cell), 1500);
@@ -111,10 +111,11 @@ export class View {
       rows[allAnswers.length - 1].querySelectorAll<HTMLDivElement>('.cell');
 
     const prevAnswer = allAnswers.at(-1);
-    // console.log(cells, prevAnswer, correctAnswer);
     if (!prevAnswer) throw new Error('prevAnswer is undefined');
     cells.forEach((cell, index) => {
-      const animationDuration = ROTATE_ROW_ANIMATION_DURATION * index;
+      const animationDuration =
+        ROTATE_ROW_ANIMATION_DURATION * index +
+        ROTATE_ROW_ANIMATION_DURATION / 2;
       console.log(cell, index);
       if (prevAnswer[index] === correctAnswer[index]) {
         setTimeout(() => {
