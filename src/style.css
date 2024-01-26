@@ -8,8 +8,8 @@
 
   --color-correct: #538d4e;
   --color-present: #b59f3b;
-  --color-wrong: #3a3a3c;
-  --color-accent: #565758;
+  --color-wrong: #565758;
+  --color-accent: #3a3a3c;
 
   color-scheme: light dark;
   color: var(--color-main);
@@ -19,6 +19,17 @@
 body {
   margin: 0;
   padding: 0;
+}
+
+header {
+  width: 100vw;
+  border-bottom: solid 1px var(--color-accent);
+}
+
+h1 {
+  font-size: 2em;
+  line-height: 1.1;
+  text-align: center;
 }
 
 #board {
@@ -50,17 +61,17 @@ body {
 .cell[data-state='tbd'] {
   border-color: var(--color-wrong);
 }
-
-.wrong {
-  background-color: var(--color-wrong);
-}
-
-.right {
+.cell[data-state='correct'] {
+  border-color: var(--color-correct);
   background-color: var(--color-correct);
 }
-
-.misplaced {
+.cell[data-state='misplaced'] {
+  border-color: var(--color-present);
   background-color: var(--color-present);
+}
+.cell[data-state='incorrect'] {
+  border-color: var(--color-wrong);
+  background-color: var(--color-wrong);
 }
 
 #keyboard {
@@ -116,17 +127,6 @@ body {
   }
 }
 
-header {
-  width: 100vw;
-  border-bottom: solid 1px var(--color-accent);
-}
-
-h1 {
-  font-size: 2em;
-  line-height: 1.1;
-  text-align: center;
-}
-
 @keyframes letterEntered {
   from {
     opacity: 0.5;
@@ -139,5 +139,17 @@ h1 {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes rotateRow {
+  from {
+    transform: rotateX(0);
+  }
+  50% {
+    transform: rotateX(0.25turn);
+  }
+  100% {
+    transform: rotateX(0);
   }
 }

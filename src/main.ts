@@ -32,6 +32,8 @@ function init() {
   });
   store.addEventListener('answer-submitted', () => {
     view.updateScreenKeyboardColors(store.getState());
+    view.animateRotateRow(store.getState().allAnswers.length - 1);
+    view.updateCellsColor(store.getState());
   });
   store.addEventListener('invalid-answer', () => {
     view.animateShakeRow(store.getState());

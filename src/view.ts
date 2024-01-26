@@ -1,4 +1,4 @@
-import { DeleteIcon, QWERTY } from './CONSTS';
+import { DeleteIcon, QWERTY, ROTATE_ROW_ANIMATION_DURATION } from './CONSTS';
 import { gameState } from './store';
 import { clearAnimation } from './utils';
 
@@ -23,7 +23,7 @@ export class View {
       for (let j = 0; j < cols; j++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
-        cell.setAttribute('data-state', 'empty');
+        this.changeCellColor(cell, 'empty');
         row.appendChild(cell);
       }
       this.board.appendChild(row);
@@ -48,11 +48,11 @@ export class View {
       }
       if (state.currentAnswer[index]) {
         cell.innerHTML = state.currentAnswer[index];
-        cell.setAttribute('data-state', 'tbd');
+        this.changeCellColor(cell, 'tbd');
         return;
       }
       cell.innerHTML = '';
-      cell.setAttribute('data-state', 'empty');
+      this.changeCellColor(cell, 'empty');
     });
   }
   animateLetterEntered(cell: HTMLDivElement) {
@@ -89,6 +89,56 @@ export class View {
   updateScreenKeyboardColors(state: gameState) {
     // const keys = this.keyboard.querySelectorAll('button');
     return state;
+  }
+
+  animateRotateRow(index: number) {
+    const row = this.board.children[index];
+    const cells = row.querySelectorAll<HTMLDivElement>('.cell');
+
+    cells.forEach((cell, index) => {
+      const animationDuration = ROTATE_ROW_ANIMATION_DURATION * index;
+      cell.style.animationName = 'rotateRow';
+      cell.style.animationDuration = '250ms';
+      cell.style.animationTimingFunction = 'ease-out';
+      cell.style.animationDelay = `${animationDuration}ms`;
+      setTimeout(() => clearAnimation(cell), 1500);
+    });
+  }
+
+  updateCellsColor({ allAnswers, correctAnswer }: gameState) {
+    const rows = this.board.querySelectorAll<HTMLDivElement>('.row');
+    const cells =
+      rows[allAnswers.length - 1].querySelectorAll<HTMLDivElement>('.cell');
+
+    const prevAnswer = allAnswers.at(-1);
+    // console.log(cells, prevAnswer, correctAnswer);
+    if (!prevAnswer) throw new Error('prevAnswer is undefined');
+    cells.forEach((cell, index) => {
+      const animationDuration = ROTATE_ROW_ANIMATION_DURATION * index;
+      console.log(cell, index);
+      if (prevAnswer[index] === correctAnswer[index]) {
+        setTimeout(() => {
+          this.changeCellColor(cell, 'correct');
+        }, animationDuration);
+        return;
+      }
+      if (correctAnswer.includes(prevAnswer[index])) {
+        setTimeout(() => {
+          this.changeCellColor(cell, 'misplaced');
+        }, animationDuration);
+        return;
+      }
+      setTimeout(() => {
+        this.changeCellColor(cell, 'incorrect');
+      }, animationDuration);
+    });
+  }
+
+  changeCellColor(
+    cell: HTMLDivElement,
+    state: 'tbd' | 'empty' | 'correct' | 'incorrect' | 'misplaced'
+  ) {
+    cell.setAttribute('data-state', state);
   }
 
   animateShakeRow({ allAnswers }: gameState) {
