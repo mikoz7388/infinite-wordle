@@ -1,13 +1,11 @@
 import { ROWS } from './CONSTS';
 import { words } from './words';
 
-type cellColor = 'right' | 'wrong' | 'misplaced';
 export type gameState = {
   isGameOver: boolean;
   currentAnswer: string;
   correctAnswer: string;
   allAnswers: string[];
-  cellsColors: cellColor[];
 };
 
 const testState: gameState = {
@@ -15,7 +13,6 @@ const testState: gameState = {
   correctAnswer: '',
   currentAnswer: '',
   allAnswers: [],
-  cellsColors: [],
 };
 
 export class Store extends EventTarget {
@@ -139,24 +136,23 @@ export class Store extends EventTarget {
     this.saveState(stateClone);
   }
 
-  defineCellsColors() {
-    const {
-      cellsColors = [],
-      correctAnswer,
-      currentAnswer,
-    } = structuredClone(this.getState());
+  updateScreenKeyboardColors({ allAnswers, correctAnswer }: gameState) {
+    const lastAnswer = allAnswers.at(-1);
+    if (!lastAnswer) throw new Error('lastAnswer is undefined');
 
-    for (let i = 0; i < currentAnswer.length; i++) {
-      if (!correctAnswer.includes(currentAnswer[i])) {
-        cellsColors.push('wrong');
+    const keyCollorsToChange = [];
+    for (let i = 0; i < lastAnswer.length; i++) {
+      if (lastAnswer[i] === correctAnswer[i]) {
+        keyCollorsToChange.push({ [lastAnswer[i]]: 'correct' });
+        continue;
       }
-      if (currentAnswer[i] === correctAnswer[i]) {
-        cellsColors.push('right');
-      } else if (correctAnswer.includes(currentAnswer[i])) {
-        cellsColors.push('misplaced');
+      if (correctAnswer.includes(lastAnswer[i])) {
+        keyCollorsToChange.push({ [lastAnswer[i]]: 'misplaced' });
+        continue;
       }
+      keyCollorsToChange.push({ [lastAnswer[i]]: 'incorrect' });
     }
-    return cellsColors;
+    console.log(keyCollorsToChange);
   }
 
   reset() {
