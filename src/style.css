@@ -101,6 +101,16 @@ h1 {
   cursor: pointer;
 }
 
+#keyboard div button[data-state='correct'] {
+  background-color: var(--color-correct);
+}
+#keyboard div button[data-state='misplaced'] {
+  background-color: var(--color-present);
+}
+#keyboard div button[data-state='incorrect'] {
+  background-color: var(--color-accent);
+}
+
 #keyboard div:last-of-type button:last-of-type,
 #keyboard div:last-of-type button:first-of-type {
   aspect-ratio: 2/1;

@@ -1,11 +1,14 @@
 import { ROWS } from './CONSTS';
 import { words } from './words';
 
+type keyStateColor = 'correct' | 'incorrect' | 'misplaced';
+
 export type gameState = {
   isGameOver: boolean;
   currentAnswer: string;
   correctAnswer: string;
   allAnswers: string[];
+  keyboardColors: Map<string, keyStateColor>;
 };
 
 const testState: gameState = {
@@ -13,6 +16,7 @@ const testState: gameState = {
   correctAnswer: '',
   currentAnswer: '',
   allAnswers: [],
+  keyboardColors: new Map(),
 };
 
 export class Store extends EventTarget {
@@ -104,8 +108,8 @@ export class Store extends EventTarget {
       return;
     }
 
-    stateClone.cellsColors = this.defineCellsColors();
     if (this.isAnswerCorrect()) alert('You win!');
+    stateClone.keyboardColors = this.updateScreenKeyboardColors(stateClone);
     stateClone.allAnswers.push(stateClone.currentAnswer);
     stateClone.currentAnswer = '';
     this.saveState(stateClone);
@@ -136,30 +140,35 @@ export class Store extends EventTarget {
     this.saveState(stateClone);
   }
 
-  updateScreenKeyboardColors({ allAnswers, correctAnswer }: gameState) {
-    const lastAnswer = allAnswers.at(-1);
-    if (!lastAnswer) throw new Error('lastAnswer is undefined');
+  updateScreenKeyboardColors({ currentAnswer, correctAnswer }: gameState) {
+    const keyboardColors = this.getState().keyboardColors;
 
-    const keyCollorsToChange = [];
-    for (let i = 0; i < lastAnswer.length; i++) {
-      if (lastAnswer[i] === correctAnswer[i]) {
-        keyCollorsToChange.push({ [lastAnswer[i]]: 'correct' });
+    for (let i = 0; i < currentAnswer.length; i++) {
+      if (
+        currentAnswer[i] === correctAnswer[i] ||
+        keyboardColors.get(currentAnswer[i]) === 'correct'
+      ) {
+        keyboardColors.set(currentAnswer[i], 'correct');
         continue;
       }
-      if (correctAnswer.includes(lastAnswer[i])) {
-        keyCollorsToChange.push({ [lastAnswer[i]]: 'misplaced' });
+      if (
+        correctAnswer.includes(currentAnswer[i]) &&
+        keyboardColors.get(currentAnswer[i]) !== 'correct'
+      ) {
+        keyboardColors.set(currentAnswer[i], 'misplaced');
         continue;
+      } else {
+        keyboardColors.set(currentAnswer[i], 'incorrect');
       }
-      keyCollorsToChange.push({ [lastAnswer[i]]: 'incorrect' });
     }
-    console.log(keyCollorsToChange);
+
+    return keyboardColors;
   }
 
   reset() {
     const stateClone = structuredClone(this.getState());
     stateClone.currentAnswer = '';
     stateClone.allAnswers = [];
-    stateClone.cellsColors = [];
     stateClone.isGameOver = false;
     this.generateRandomAnswer();
     this.saveState(stateClone);

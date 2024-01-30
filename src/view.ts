@@ -86,9 +86,16 @@ export class View {
     });
   }
 
-  updateScreenKeyboardColors(state: gameState) {
-    // const keys = this.keyboard.querySelectorAll('button');
-    return state;
+  updateKeyboard({ keyboardColors }: gameState) {
+    const keyboard =
+      this.keyboard.querySelectorAll<HTMLButtonElement>('button');
+    keyboard.forEach((key) => {
+      if (!key.textContent || key.textContent.length > 1) return;
+      key.setAttribute(
+        'data-state',
+        keyboardColors.get([key.textContent][0].toLowerCase()) || 'tbd'
+      );
+    });
   }
 
   animateRotateRow(index: number) {
@@ -116,11 +123,11 @@ export class View {
       const animationDuration =
         ROTATE_ROW_ANIMATION_DURATION * index +
         ROTATE_ROW_ANIMATION_DURATION / 2;
-      console.log(cell, index);
       if (prevAnswer[index] === correctAnswer[index]) {
         setTimeout(() => {
           this.changeCellColor(cell, 'correct');
         }, animationDuration);
+
         return;
       }
       if (correctAnswer.includes(prevAnswer[index])) {

@@ -1,4 +1,4 @@
-import { COLS, ROWS } from './CONSTS';
+import { COLS, ROTATE_ROW_ANIMATION_DURATION, ROWS } from './CONSTS';
 import { Store } from './store';
 import './style.css';
 import { View } from './view';
@@ -31,9 +31,11 @@ function init() {
     view.updateBoard(store.getState());
   });
   store.addEventListener('answer-submitted', () => {
-    view.updateScreenKeyboardColors(store.getState());
     view.animateRotateRow(store.getState().allAnswers.length - 1);
     view.updateCellsColor(store.getState());
+    setTimeout(() => {
+      view.updateKeyboard(store.getState());
+    }, ROTATE_ROW_ANIMATION_DURATION * ROWS);
   });
   store.addEventListener('invalid-answer', () => {
     view.animateShakeRow(store.getState());
