@@ -1,5 +1,7 @@
-export function clearAnimation(cell: HTMLElement) {
-  cell.style.animationName = '';
-  cell.style.animationDuration = '';
-  cell.style.animationTimingFunction = '';
+export function clearAnimation(element: HTMLElement, animationName: string) {
+  if (element.style.animationName === animationName) {
+    element.style.animationName = '';
+    element.style.animationDuration = '';
+    element.style.animationTimingFunction = '';
+  }
 }

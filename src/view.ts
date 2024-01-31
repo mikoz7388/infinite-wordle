@@ -60,7 +60,7 @@ export class View {
     cell.style.animationDuration = '100ms';
     cell.style.animationTimingFunction = 'ease-out';
 
-    setTimeout(() => clearAnimation(cell), 200);
+    setTimeout(() => clearAnimation(cell, 'letterEntered'), 200);
   }
 
   createKeyboard() {
@@ -108,7 +108,7 @@ export class View {
       cell.style.animationDuration = `${ROTATE_ROW_ANIMATION_DURATION}ms`;
       cell.style.animationTimingFunction = 'ease-out';
       cell.style.animationDelay = `${animationDuration}ms`;
-      setTimeout(() => clearAnimation(cell), 1500);
+      setTimeout(() => clearAnimation(cell, 'rotateRow'), 1500);
     });
   }
 
@@ -124,21 +124,24 @@ export class View {
         ROTATE_ROW_ANIMATION_DURATION * index +
         ROTATE_ROW_ANIMATION_DURATION / 2;
       if (prevAnswer[index] === correctAnswer[index]) {
-        setTimeout(() => {
-          this.changeCellColor(cell, 'correct');
-        }, animationDuration);
+        setTimeout(
+          () => this.changeCellColor(cell, 'correct'),
+          animationDuration
+        );
 
         return;
       }
       if (correctAnswer.includes(prevAnswer[index])) {
-        setTimeout(() => {
-          this.changeCellColor(cell, 'misplaced');
-        }, animationDuration);
+        setTimeout(
+          () => this.changeCellColor(cell, 'misplaced'),
+          animationDuration
+        );
         return;
       }
-      setTimeout(() => {
-        this.changeCellColor(cell, 'incorrect');
-      }, animationDuration);
+      setTimeout(
+        () => this.changeCellColor(cell, 'incorrect'),
+        animationDuration
+      );
     });
   }
 
@@ -156,8 +159,6 @@ export class View {
     row.style.animationDuration = '200ms';
     row.style.animationTimingFunction = 'ease-out';
 
-    setTimeout(() => {
-      clearAnimation(row);
-    }, 500);
+    setTimeout(() => clearAnimation(row, 'shakeRow'), 500);
   }
 }
