@@ -1,4 +1,10 @@
-import { DeleteIcon, QWERTY, ROTATE_ROW_ANIMATION_DURATION } from './CONSTS';
+import {
+  COLS,
+  DeleteIcon,
+  QWERTY,
+  ROTATE_ROW_ANIMATION_DURATION,
+  ROWS,
+} from './CONSTS';
 import { gameState } from './store';
 import { clearAnimation } from './utils';
 
@@ -64,6 +70,7 @@ export class View {
   }
 
   createKeyboard() {
+    this.keyboard.innerHTML = '';
     QWERTY.forEach((row, index) => {
       const keyboardRow = document.createElement('div');
       for (const letter of row) {
@@ -160,5 +167,25 @@ export class View {
     row.style.animationTimingFunction = 'ease-out';
 
     setTimeout(() => clearAnimation(row, 'shakeRow'), 500);
+  }
+
+  showGameOver({ correctAnswer }: gameState) {
+    const modal = document.createElement('modal');
+    modal.innerHTML = `
+    <div class="modal">
+      <h2>Game Over</h2>
+      <p>The correct answer was ${correctAnswer}</p>
+      <button>Close</button>
+    </div>
+  `;
+    document.body.appendChild(modal);
+    modal.querySelector('button')!.addEventListener('click', () => {
+      modal.remove();
+    });
+  }
+
+  reset() {
+    this.createKeyboard();
+    this.renderBoard(ROWS, COLS);
   }
 }

@@ -28,6 +28,7 @@ export class Store extends EventTarget {
     super();
     if (storageKey) this.storageKey = storageKey;
     this.state = testState;
+    this.state.correctAnswer = this.generateRandomAnswer();
   }
 
   saveState(stateOrFn: gameState | ((prevState: gameState) => gameState)) {
@@ -56,7 +57,7 @@ export class Store extends EventTarget {
   }
 
   keyDownHandler(e: KeyboardEvent) {
-    if (this.isAnimationRunning) return;
+    if (this.getState().isGameOver || this.isAnimationRunning) return;
     if (e.key === 'Enter') {
       this.submitAnswer();
       return;
@@ -65,7 +66,7 @@ export class Store extends EventTarget {
   }
 
   keyboardClickHandler(e: MouseEvent) {
-    if (this.isAnimationRunning) return;
+    if (this.getState().isGameOver || this.isAnimationRunning) return;
     const target = e.target;
 
     if (target instanceof SVGElement) {
@@ -114,20 +115,21 @@ export class Store extends EventTarget {
       return;
     }
 
-    if (this.isAnswerCorrect()) alert('You win!');
     stateClone.keyboardColors = this.updateScreenKeyboardColors(stateClone);
     stateClone.allAnswers.push(stateClone.currentAnswer);
+    stateClone.isGameOver = this.isGameOver(stateClone);
     stateClone.currentAnswer = '';
     this.saveState(stateClone);
-
     this.dispatchEvent(new Event('answer-submitted'));
   }
 
-  isGameOver() {
-    const stateClone = structuredClone(this.getState());
+  isGameOver({ correctAnswer, currentAnswer, allAnswers }: gameState) {
+    console.log(correctAnswer, currentAnswer, allAnswers);
+    if (correctAnswer === currentAnswer || allAnswers.length === ROWS) {
+      return true;
+    }
 
-    stateClone.isGameOver = stateClone.allAnswers.length === ROWS;
-    this.saveState(stateClone);
+    return false;
   }
 
   isCurrentAnswerInWords() {
@@ -136,14 +138,8 @@ export class Store extends EventTarget {
     return words.includes(currentAnswer);
   }
 
-  isAnswerCorrect() {
-    const { currentAnswer, correctAnswer } = this.getState();
-    return currentAnswer === correctAnswer;
-  }
   generateRandomAnswer() {
-    const stateClone = structuredClone(this.getState());
-    stateClone.correctAnswer = words[Math.floor(Math.random() * words.length)];
-    this.saveState(stateClone);
+    return words[Math.floor(Math.random() * words.length)];
   }
 
   updateScreenKeyboardColors({ currentAnswer, correctAnswer }: gameState) {
@@ -177,7 +173,8 @@ export class Store extends EventTarget {
     stateClone.allAnswers = [];
     stateClone.keyboardColors = new Map();
     stateClone.isGameOver = false;
-    this.generateRandomAnswer();
+    stateClone.correctAnswer = this.generateRandomAnswer();
     this.saveState(stateClone);
+    console.log(this.getState());
   }
 }

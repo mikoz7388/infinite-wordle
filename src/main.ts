@@ -28,6 +28,10 @@ function init() {
   });
 
   store.addEventListener('state-changed', () => {
+    if (store.getState().isGameOver) {
+      setTimeout(() => view.showGameOver(store.getState()), 1500);
+      return;
+    }
     view.updateBoard(store.getState());
   });
   store.addEventListener('answer-submitted', () => {
@@ -42,6 +46,13 @@ function init() {
     view.animateShakeRow(store.getState());
     setTimeout(() => (store.isAnimationRunning = false), 300);
   });
+
+  document
+    .querySelector<HTMLButtonElement>('#reset')!
+    .addEventListener('click', () => {
+      store.reset();
+      view.reset();
+    });
 }
 
 window.addEventListener('load', init);
