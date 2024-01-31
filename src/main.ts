@@ -35,10 +35,12 @@ function init() {
     view.updateCellsColor(store.getState());
     setTimeout(() => {
       view.updateKeyboard(store.getState());
+      store.isAnimationRunning = false;
     }, ROTATE_ROW_ANIMATION_DURATION * ROWS);
   });
   store.addEventListener('invalid-answer', () => {
     view.animateShakeRow(store.getState());
+    setTimeout(() => (store.isAnimationRunning = false), 300);
   });
 }
 

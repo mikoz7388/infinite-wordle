@@ -22,6 +22,7 @@ const testState: gameState = {
 export class Store extends EventTarget {
   private storageKey = 'wordle';
   state: gameState;
+  isAnimationRunning = false;
 
   constructor(storageKey?: string) {
     super();
@@ -55,6 +56,7 @@ export class Store extends EventTarget {
   }
 
   keyDownHandler(e: KeyboardEvent) {
+    if (this.isAnimationRunning) return;
     if (e.key === 'Enter') {
       this.submitAnswer();
       return;
@@ -63,6 +65,7 @@ export class Store extends EventTarget {
   }
 
   keyboardClickHandler(e: MouseEvent) {
+    if (this.isAnimationRunning) return;
     const target = e.target;
 
     if (target instanceof SVGElement) {
@@ -102,6 +105,9 @@ export class Store extends EventTarget {
   }
 
   submitAnswer() {
+    if (this.isAnimationRunning) return;
+    this.isAnimationRunning = true;
+
     const stateClone = structuredClone(this.getState());
     if (!this.isCurrentAnswerInWords()) {
       this.dispatchEvent(new Event('invalid-answer'));
@@ -169,6 +175,7 @@ export class Store extends EventTarget {
     const stateClone = structuredClone(this.getState());
     stateClone.currentAnswer = '';
     stateClone.allAnswers = [];
+    stateClone.keyboardColors = new Map();
     stateClone.isGameOver = false;
     this.generateRandomAnswer();
     this.saveState(stateClone);
