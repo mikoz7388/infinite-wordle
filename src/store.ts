@@ -1,59 +1,85 @@
 import { ROWS } from './CONSTS';
 import { words } from './words';
 
-type keyStateColor = 'correct' | 'incorrect' | 'misplaced';
-
 export type gameState = {
   isGameOver: boolean;
   currentAnswer: string;
   correctAnswer: string;
   allAnswers: string[];
-  keyboardColors: Map<string, keyStateColor>;
-};
-
-const testState: gameState = {
-  isGameOver: false,
-  correctAnswer: '',
-  currentAnswer: '',
-  allAnswers: [],
-  keyboardColors: new Map(),
+  keyboardColors: Map<string, 'correct' | 'incorrect' | 'misplaced'>;
 };
 
 export class Store extends EventTarget {
   private storageKey = 'wordle';
-  state: gameState;
-  isAnimationRunning = false;
+  public state: gameState;
+  public isAnimationRunning = false;
+  private defaultState: gameState = {
+    isGameOver: false,
+    correctAnswer: '',
+    currentAnswer: '',
+    allAnswers: [],
+    keyboardColors: new Map(),
+  };
 
-  constructor(storageKey?: string) {
+  constructor(storageKey: string) {
     super();
-    if (storageKey) this.storageKey = storageKey;
-    this.state = testState;
+    this.storageKey = storageKey;
+    this.state = this.defaultState;
     this.state.correctAnswer = this.generateRandomAnswer();
+
+    const localStorageState = this.getStateFromLocalStorage();
+    if (localStorageState) {
+      this.syncState(localStorageState);
+    }
   }
 
-  saveState(stateOrFn: gameState | ((prevState: gameState) => gameState)) {
-    const prevState = this.getState();
-    let newState: gameState;
+  syncState({
+    allAnswers,
+    correctAnswer,
+  }: {
+    allAnswers: string[];
+    correctAnswer: string;
+  }) {
+    this.state.allAnswers = allAnswers;
+    this.state.correctAnswer = correctAnswer;
 
-    switch (typeof stateOrFn) {
-      case 'function':
-        newState = stateOrFn(prevState);
-        break;
-      case 'object':
-        newState = stateOrFn;
-        break;
-      default:
-        throw new Error('Invalid argument passed to saveState');
+    for (const answer of allAnswers) {
+      this.state.keyboardColors = this.updateScreenKeyboardColors(
+        answer,
+        correctAnswer
+      );
     }
-    // window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
-    this.state = newState;
+    setTimeout(
+      () => this.dispatchEvent(new Event('local-storage-state-loaded')),
+      0
+    );
+  }
+
+  saveState(state: gameState) {
+    if (!state) throw new Error('Invalid argument passed to saveState');
+
+    this.state = state;
+    this.saveStateToLocalStorage(state);
     this.dispatchEvent(new Event('state-changed'));
+  }
+
+  saveStateToLocalStorage({ allAnswers, correctAnswer }: gameState) {
+    const state = { allAnswers, correctAnswer };
+    window.localStorage.setItem(this.storageKey, JSON.stringify(state));
+  }
+
+  getStateFromLocalStorage(): {
+    allAnswers: string[];
+    correctAnswer: string;
+  } | null {
+    const item = window.localStorage.getItem(this.storageKey);
+    if (!item) return null;
+    const { allAnswers, correctAnswer } = JSON.parse(item);
+    return { allAnswers, correctAnswer };
   }
 
   getState(): gameState {
     return this.state;
-    // const item = window.localStorage.getItem(this.storageKey);
-    // return item ? JSON.parse(item) : initialState;
   }
 
   keyDownHandler(e: KeyboardEvent) {
@@ -63,6 +89,7 @@ export class Store extends EventTarget {
       return;
     }
     this.updateCurrentAnswer(e.key);
+    console.log(this.getState());
   }
 
   keyboardClickHandler(e: MouseEvent) {
@@ -115,7 +142,10 @@ export class Store extends EventTarget {
       return;
     }
 
-    stateClone.keyboardColors = this.updateScreenKeyboardColors(stateClone);
+    stateClone.keyboardColors = this.updateScreenKeyboardColors(
+      stateClone.currentAnswer,
+      stateClone.correctAnswer
+    );
     stateClone.allAnswers.push(stateClone.currentAnswer);
     stateClone.isGameOver = this.isGameOver(stateClone);
     stateClone.currentAnswer = '';
@@ -142,7 +172,7 @@ export class Store extends EventTarget {
     return words[Math.floor(Math.random() * words.length)];
   }
 
-  updateScreenKeyboardColors({ currentAnswer, correctAnswer }: gameState) {
+  updateScreenKeyboardColors(currentAnswer: string, correctAnswer: string) {
     const keyboardColors = this.getState().keyboardColors;
 
     for (let i = 0; i < currentAnswer.length; i++) {
@@ -175,6 +205,5 @@ export class Store extends EventTarget {
     stateClone.isGameOver = false;
     stateClone.correctAnswer = this.generateRandomAnswer();
     this.saveState(stateClone);
-    console.log(this.getState());
   }
 }

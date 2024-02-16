@@ -14,10 +14,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `;
 
 function init() {
-  const store = new Store();
+  const store = new Store('wordle');
   const view = new View();
+  store.getStateFromLocalStorage();
 
-  store.generateRandomAnswer();
   view.renderBoard(ROWS, COLS);
   view.createKeyboard();
   view.bindKeyboardClick((e) => {
@@ -28,23 +28,42 @@ function init() {
   });
 
   store.addEventListener('state-changed', () => {
-    if (store.getState().isGameOver) {
-      setTimeout(() => view.showGameOver(store.getState()), 1500);
+    const state = store.getState();
+    if (state.isGameOver) {
+      setTimeout(() => view.showGameOver(state), 1500);
       return;
     }
-    view.updateBoard(store.getState());
+    view.updateBoard(state.currentAnswer, state.allAnswers.length);
   });
   store.addEventListener('answer-submitted', () => {
-    view.animateRotateRow(store.getState().allAnswers.length - 1);
-    view.updateCellsColor(store.getState());
+    const state = store.getState();
+    const rowIdx = state.allAnswers.length - 1;
+    view.animateRotateRow(rowIdx);
+    view.updateCellsColor(state, rowIdx);
     setTimeout(() => {
-      view.updateKeyboard(store.getState());
+      view.updateKeyboard(state);
       store.isAnimationRunning = false;
     }, ROTATE_ROW_ANIMATION_DURATION * ROWS);
   });
   store.addEventListener('invalid-answer', () => {
     view.animateShakeRow(store.getState());
     setTimeout(() => (store.isAnimationRunning = false), 300);
+  });
+
+  store.addEventListener('local-storage-state-loaded', () => {
+    const state = store.getState();
+
+    for (let i = 0; i < state.allAnswers.length; i++) {
+      view.updateBoard(state.allAnswers[i], i);
+      setTimeout(() => {
+        view.animateRotateRow(i);
+        view.updateCellsColor(state, i);
+      }, 120 * i);
+    }
+    setTimeout(() => {
+      view.updateKeyboard(state);
+      console.log('local-storage-state-loaded', state);
+    }, ROTATE_ROW_ANIMATION_DURATION * (state.allAnswers.length + 2));
   });
 
   document
