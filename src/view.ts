@@ -42,18 +42,18 @@ export class View {
     this.keyboard.addEventListener('click', handler);
   }
 
-  updateBoard(state: gameState) {
+  updateBoard(currentAnswer: string, rowIdx: number) {
     const rows = this.board.querySelectorAll<HTMLDivElement>('.row');
     const cells = Array.from(
-      rows[state.allAnswers.length].querySelectorAll<HTMLDivElement>('.cell')
+      rows[rowIdx].querySelectorAll<HTMLDivElement>('.cell')
     );
 
     cells.forEach((cell, index) => {
-      if (index === state.currentAnswer.length - 1 && cell.innerHTML === '') {
+      if (index === currentAnswer.length - 1 && cell.innerHTML === '') {
         this.animateLetterEntered(cell);
       }
-      if (state.currentAnswer[index]) {
-        cell.innerHTML = state.currentAnswer[index];
+      if (currentAnswer[index]) {
+        cell.innerHTML = currentAnswer[index];
         this.changeCellColor(cell, 'tbd');
         return;
       }
@@ -115,14 +115,13 @@ export class View {
       cell.style.animationDuration = `${ROTATE_ROW_ANIMATION_DURATION}ms`;
       cell.style.animationTimingFunction = 'ease-out';
       cell.style.animationDelay = `${animationDuration}ms`;
-      setTimeout(() => clearAnimation(cell, 'rotateRow'), 1500);
+      setTimeout(() => clearAnimation(cell, 'rotateRow'), 5000);
     });
   }
 
-  updateCellsColor({ allAnswers, correctAnswer }: gameState) {
+  updateCellsColor({ allAnswers, correctAnswer }: gameState, rowIdx: number) {
     const rows = this.board.querySelectorAll<HTMLDivElement>('.row');
-    const cells =
-      rows[allAnswers.length - 1].querySelectorAll<HTMLDivElement>('.cell');
+    const cells = rows[rowIdx].querySelectorAll<HTMLDivElement>('.cell');
 
     const prevAnswer = allAnswers.at(-1);
     if (!prevAnswer) throw new Error('prevAnswer is undefined');
