@@ -116,6 +116,26 @@ h1 {
   aspect-ratio: 2/1;
 }
 
+#reset {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 5px;
+  border: none;
+  margin: 1rem auto;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: var(--color-main);
+  color: var(--color-background);
+}
+
+#reset:hover {
+  cursor: pointer;
+  transition: background-color 100ms ease-in-out;
+  background-color: var(--color-accent);
+  color: var(--color-main);
+}
+
 modal {
   position: fixed;
   display: flex;
