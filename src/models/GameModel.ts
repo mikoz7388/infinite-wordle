@@ -30,7 +30,6 @@ export class GameModel extends EventEmitter<GameEvents> {
       keyboardColors: new Map(),
     };
 
-    // Load from storage if available
     const storedState = this.storageService.loadState();
     if (storedState) {
       this.syncState(storedState);

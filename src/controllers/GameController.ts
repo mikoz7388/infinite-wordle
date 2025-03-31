@@ -1,7 +1,10 @@
 import { GameModel } from '../models/GameModel';
 import { GameView } from '../views/GameView';
 import { GameEvent } from '../types';
-import { ROTATE_ROW_ANIMATION_DURATION, ROWS } from '../constants';
+import {
+  CELL_ANIMATION_OFFSET,
+  ROTATE_ROW_ANIMATION_DURATION,
+} from '../constants';
 
 export class GameController {
   private model: GameModel;
@@ -13,48 +16,31 @@ export class GameController {
     this.bindEvents();
   }
 
-  /**
-   * Initialize the application
-   */
   public init(): void {
     this.view.renderBoard();
     this.view.createKeyboard();
   }
 
-  /**
-   * Bind all event handlers between model and view
-   */
   private bindEvents(): void {
     this.bindUserInputEvents();
     this.bindModelEvents();
   }
 
-  /**
-   * Handle user input events from the view
-   */
   private bindUserInputEvents(): void {
-    // Handle keyboard input
     this.view.on('keypress', (e: KeyboardEvent) => {
       if (this.isInteractionDisabled()) return;
       this.handleKeyInput(e.key);
     });
 
-    // Handle on-screen keyboard clicks
     this.view.bindKeyboardClick(this.handleKeyboardClick.bind(this));
 
-    // Handle game reset
     this.view.on('reset', () => {
-      console.log('to jest racja');
       this.model.reset();
       this.view.reset();
     });
   }
 
-  /**
-   * Handle events emitted by the model
-   */
   private bindModelEvents(): void {
-    // Handle state changes
     this.model.on(GameEvent.STATE_CHANGED, () => {
       const state = this.model.getState();
 
@@ -66,7 +52,6 @@ export class GameController {
       this.view.updateBoard(state.currentAnswer, state.allAnswers.length);
     });
 
-    // Handle submitted answers
     this.model.on(GameEvent.ANSWER_SUBMITTED, () => {
       const state = this.model.getState();
       const rowIdx = state.allAnswers.length - 1;
@@ -74,7 +59,9 @@ export class GameController {
       this.view.animateRotateRow(rowIdx);
       this.view.updateCellsColor(state, rowIdx);
 
-      this.scheduleKeyboardUpdate(ROTATE_ROW_ANIMATION_DURATION * ROWS);
+      this.scheduleKeyboardUpdate(
+        ROTATE_ROW_ANIMATION_DURATION + CELL_ANIMATION_OFFSET * 5
+      );
     });
 
     // Handle invalid answers
