@@ -8,7 +8,7 @@
 
   --color-correct: #538d4e;
   --color-present: #b59f3b;
-  --color-wrong: #565758;
+  --color-wrong: #3a3a3c;
   --color-accent: #3a3a3c;
 
   color-scheme: light dark;
@@ -38,6 +38,7 @@ h1 {
   margin: 2rem auto;
   display: grid;
   gap: 5px;
+  perspective: 1000px;
 }
 
 .row {
@@ -56,7 +57,9 @@ h1 {
   font-size: 2rem;
   line-height: 60px;
   font-weight: bold;
-  transition: rotateRow 1s linear;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  position: relative;
 }
 .cell[data-state='tbd'] {
   border-color: var(--color-wrong);
@@ -189,29 +192,127 @@ modal button {
   }
 }
 
+.letter-typed {
+  animation: letterEntered 180ms;
+}
+
 @keyframes letterEntered {
-  from {
+  0% {
     opacity: 0.5;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   50% {
     opacity: 0.85;
     transform: scale(1.1);
   }
-  to {
+  100% {
     opacity: 1;
     transform: scale(1);
   }
 }
 
 @keyframes rotateRow {
-  from {
-    transform: rotateX(0);
+  0% {
+    transform: rotateX(0deg);
   }
   50% {
-    transform: rotateX(0.25turn);
+    transform: rotateX(90deg);
   }
   100% {
-    transform: rotateX(0);
+    transform: rotateX(0deg);
   }
+}
+
+.shake {
+  animation: shakeRow 300ms ease-out;
+}
+
+.flip {
+  animation: rotateRow 800ms cubic-bezier(0.455, 0.03, 0.515, 0.955) forwards;
+  backface-visibility: visible;
+  transform-style: preserve-3d;
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 1.25em;
+  height: 58px;
+  min-width: 43px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.key.correct {
+  background-color: var(--color-correct);
+}
+
+.key.misplaced {
+  background-color: var(--color-present);
+}
+
+.key.incorrect {
+  background-color: var(--color-accent);
+}
+
+.keyboard-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  display: flex;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  margin: auto;
+  padding: 2rem;
+  background-color: var(--color-background);
+  border-radius: 5px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+#play-again {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--color-accent);
+  color: var(--color-main);
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Cell color states */
+.cell.correct {
+  border-color: var(--color-correct);
+  background-color: var(--color-correct);
+}
+
+.cell.misplaced {
+  border-color: var(--color-present);
+  background-color: var(--color-present);
+}
+
+.cell.incorrect {
+  border-color: var(--color-wrong);
+  background-color: var(--color-wrong);
 }
