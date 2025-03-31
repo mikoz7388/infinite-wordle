@@ -6,7 +6,7 @@ import {
 
 export class BoardView {
   private boardElement: HTMLElement;
-  private previousAnswerLength: Map<number, number> = new Map(); // Track previous answer length per row
+  private previousAnswerLength: Map<number, number> = new Map();
 
   constructor(boardElement: HTMLElement) {
     this.boardElement = boardElement;
@@ -78,7 +78,7 @@ export class BoardView {
     cells.forEach((cell, idx) => {
       setTimeout(() => {
         cell.classList.add('flip');
-      }, idx * CELL_ANIMATION_OFFSET); // Use offset instead of full duration
+      }, idx * CELL_ANIMATION_OFFSET);
     });
   }
 
@@ -89,7 +89,6 @@ export class BoardView {
     const cell = row.querySelector(`[data-cell-idx="${colIndex}"]`);
     if (!cell) return;
 
-    // Add animation class
     cell.classList.add('letter-typed');
 
     setTimeout(() => {
@@ -109,7 +108,6 @@ export class BoardView {
 
     cells.forEach((cell, i) => {
       setTimeout(() => {
-        // Add color exactly at the midpoint of the animation (when cell is "flipped")
         setTimeout(() => {
           if (answer[i] === correctAnswer[i]) {
             cell.classList.add('correct');
@@ -124,18 +122,13 @@ export class BoardView {
   }
 
   public reset(): void {
-    // Clear the answer length tracking
     this.previousAnswerLength.clear();
 
-    // Get all cells
     const cells = this.boardElement.querySelectorAll('.cell');
 
-    // Reset each cell's content and styling
     cells.forEach((cell) => {
-      // Clear content
       cell.textContent = '';
 
-      // Reset styling - remove all state classes
       cell.classList.remove(
         'correct',
         'misplaced',
@@ -144,16 +137,13 @@ export class BoardView {
         'shake'
       );
 
-      // Make sure cell is visible and properly styled
       (cell as HTMLElement).style.removeProperty('background-color');
       (cell as HTMLElement).style.removeProperty('color');
       (cell as HTMLElement).style.removeProperty('border-color');
 
-      // Reset cell to its initial styling
       cell.className = 'cell';
     });
 
-    // Clear any game over screens if present
     const gameOver = this.boardElement.querySelector('.modal');
     if (gameOver) {
       gameOver.remove();
@@ -180,7 +170,6 @@ export class BoardView {
 
     document.querySelector('#play-again')?.addEventListener('click', () => {
       modalElement.remove();
-      // The controller will handle the reset
       document.querySelector('#reset')?.dispatchEvent(new Event('click'));
     });
   }

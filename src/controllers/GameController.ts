@@ -64,21 +64,16 @@ export class GameController {
       );
     });
 
-    // Handle invalid answers
     this.model.on(GameEvent.INVALID_ANSWER, () => {
       this.view.animateShakeRow(this.model.getState());
       this.releaseAnimationLock(300);
     });
 
-    // Handle loading from local storage
     this.model.on(GameEvent.LOCAL_STORAGE_STATE_LOADED, () => {
       this.handleStateLoaded();
     });
   }
 
-  /**
-   * Process keyboard input from any source
-   */
   private handleKeyInput(key: string): void {
     if (key === 'Enter') {
       this.model.submitAnswer();
@@ -87,22 +82,17 @@ export class GameController {
     }
   }
 
-  /**
-   * Handle clicks on the on-screen keyboard
-   */
   private handleKeyboardClick(e: MouseEvent): void {
     if (this.isInteractionDisabled()) return;
 
     const target = e.target as HTMLElement;
     if (!target) return;
 
-    // Handle SVG backspace icon
     if (target.tagName === 'svg' || target.tagName === 'path') {
       this.model.updateCurrentAnswer('Backspace');
       return;
     }
 
-    // Handle regular buttons
     if (target.tagName !== 'BUTTON') return;
 
     const key = target.dataset.key;
@@ -111,16 +101,10 @@ export class GameController {
     this.handleKeyInput(key);
   }
 
-  /**
-   * Check if user interaction should be blocked
-   */
   private isInteractionDisabled(): boolean {
     return this.model.isAnimationRunning || this.model.getState().isGameOver;
   }
 
-  /**
-   * Schedule keyboard update after animation completes
-   */
   private scheduleKeyboardUpdate(delay: number): void {
     setTimeout(() => {
       this.view.updateKeyboard(this.model.getState());
@@ -128,23 +112,16 @@ export class GameController {
     }, delay);
   }
 
-  /**
-   * Release animation lock after specified delay
-   */
   private releaseAnimationLock(delay: number): void {
     setTimeout(() => {
       this.model.isAnimationRunning = false;
     }, delay);
   }
 
-  /**
-   * Handle state loaded from local storage
-   */
   private handleStateLoaded(): void {
     const state = this.model.getState();
     const answersCount = state.allAnswers.length;
 
-    // Animate each row sequentially
     for (let i = 0; i < answersCount; i++) {
       this.view.updateBoard(state.allAnswers[i], i);
 
@@ -155,7 +132,6 @@ export class GameController {
       }, animationDelay);
     }
 
-    // Update keyboard once all animations are complete
     const totalDelay = ROTATE_ROW_ANIMATION_DURATION * (answersCount + 2);
     setTimeout(() => {
       this.view.updateKeyboard(state);

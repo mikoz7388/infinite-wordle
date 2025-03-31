@@ -10,11 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Initialize our components
   const model = new GameModel('wordle');
   const view = new GameView(appElement);
   const controller = new GameController(model, view);
 
-  // Start the application
   controller.init();
 });

@@ -19,7 +19,6 @@ export class GameView extends EventEmitter<ViewEvents> {
     super();
     this.appElement = appElement;
 
-    // Set up HTML structure
     this.appElement.innerHTML = `
       <div>
         <header>
@@ -43,12 +42,10 @@ export class GameView extends EventEmitter<ViewEvents> {
   }
 
   private initEventListeners(): void {
-    // Keyboard events
     document.addEventListener('keydown', (e) => {
       this.emit('keypress', e);
     });
 
-    // Reset button
     const resetButton = this.appElement.querySelector('#reset');
     if (resetButton) {
       resetButton.addEventListener('click', () => {
