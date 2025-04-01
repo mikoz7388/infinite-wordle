@@ -6,7 +6,7 @@ import { EventEmitter, EventMap } from '../utils/eventEmitter';
 
 interface ViewEvents extends EventMap {
   keydown: KeyboardEvent;
-  reset: void;
+  reset: Event;
   click: MouseEvent;
 }
 

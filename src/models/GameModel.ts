@@ -5,7 +5,7 @@ import { EventEmitter, EventMap } from '../utils/eventEmitter';
 
 interface GameEvents extends EventMap {
   keydown: KeyboardEvent;
-  reset: void;
+  reset: Event;
   [GameEvent.STATE_CHANGED]: void;
   [GameEvent.ANSWER_SUBMITTED]: void;
   [GameEvent.INVALID_ANSWER]: void;

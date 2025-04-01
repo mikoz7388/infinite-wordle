@@ -9,6 +9,7 @@ import {
 export class GameController {
   private model: GameModel;
   private view: GameView;
+  private timeouts: NodeJS.Timeout[] = [];
 
   constructor(model: GameModel, view: GameView) {
     this.model = model;
@@ -29,16 +30,21 @@ export class GameController {
   private bindUserInputEvents(): void {
     this.view.on('keydown', (e: KeyboardEvent) => {
       if (this.isInteractionDisabled()) return;
-
-      const state = this.model.getState();
-      console.log(state);
-
       this.handleKeyInput(e.key);
     });
 
     this.view.bindKeyboardClick(this.handleKeyboardClick.bind(this));
 
-    this.view.on('reset', () => {
+    this.view.on('reset', (e: Event) => {
+      if (e && e.target instanceof HTMLElement) {
+        e.target.blur();
+      } else {
+        const resetButton = document.getElementById('reset');
+        if (resetButton) resetButton.blur();
+      }
+
+      this.clearAllTimeouts();
+
       this.model.reset();
       this.view.reset();
     });
@@ -110,16 +116,18 @@ export class GameController {
   }
 
   private scheduleKeyboardUpdate(delay: number): void {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       this.view.updateKeyboard(this.model.getState());
       this.releaseAnimationLock(0);
     }, delay);
+    this.timeouts.push(timeout);
   }
 
   private releaseAnimationLock(delay: number): void {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       this.model.isAnimationRunning = false;
     }, delay);
+    this.timeouts.push(timeout);
   }
 
   private handleStateLoaded(): void {
@@ -130,15 +138,22 @@ export class GameController {
       this.view.updateBoard(state.allAnswers[i], i);
 
       const animationDelay = 120 * i;
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         this.view.animateRotateRow(i);
         this.view.updateCellsColor(state, i);
       }, animationDelay);
+      this.timeouts.push(timeout);
     }
 
     const totalDelay = ROTATE_ROW_ANIMATION_DURATION * (answersCount + 2);
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       this.view.updateKeyboard(state);
     }, totalDelay);
+    this.timeouts.push(timeout);
+  }
+
+  private clearAllTimeouts(): void {
+    this.timeouts.forEach((timeout) => clearTimeout(timeout));
+    this.timeouts = [];
   }
 }
