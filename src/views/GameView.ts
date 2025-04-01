@@ -5,7 +5,7 @@ import { COLS, ROWS } from '../constants';
 import { EventEmitter, EventMap } from '../utils/eventEmitter';
 
 interface ViewEvents extends EventMap {
-  keypress: KeyboardEvent;
+  keydown: KeyboardEvent;
   reset: void;
   click: MouseEvent;
 }
@@ -43,7 +43,7 @@ export class GameView extends EventEmitter<ViewEvents> {
 
   private initEventListeners(): void {
     document.addEventListener('keydown', (e) => {
-      this.emit('keypress', e);
+      this.emit('keydown', e);
     });
 
     const resetButton = this.appElement.querySelector('#reset');

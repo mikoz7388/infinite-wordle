@@ -27,8 +27,12 @@ export class GameController {
   }
 
   private bindUserInputEvents(): void {
-    this.view.on('keypress', (e: KeyboardEvent) => {
+    this.view.on('keydown', (e: KeyboardEvent) => {
       if (this.isInteractionDisabled()) return;
+
+      const state = this.model.getState();
+      console.log(state);
+
       this.handleKeyInput(e.key);
     });
 

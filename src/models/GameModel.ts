@@ -4,7 +4,7 @@ import { words } from '../words';
 import { EventEmitter, EventMap } from '../utils/eventEmitter';
 
 interface GameEvents extends EventMap {
-  keypress: KeyboardEvent;
+  keydown: KeyboardEvent;
   reset: void;
   [GameEvent.STATE_CHANGED]: void;
   [GameEvent.ANSWER_SUBMITTED]: void;
