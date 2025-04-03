@@ -267,7 +267,6 @@ modal button {
   margin-top: 8px;
 }
 
-/* Modal styles */
 .modal {
   position: fixed;
   display: flex;
@@ -288,19 +287,6 @@ modal button {
   text-align: center;
 }
 
-#play-again {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--color-accent);
-  color: var(--color-main);
-  font-size: 1.25rem;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
-}
-
 /* Cell color states */
 .cell.correct {
   border-color: var(--color-correct);
@@ -315,4 +301,131 @@ modal button {
 .cell.incorrect {
   border-color: var(--color-wrong);
   background-color: var(--color-wrong);
+}
+
+.modal {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  margin: auto;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  background-color: var(--color-background);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal h2 {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.victory {
+  color: var(--color-correct);
+}
+
+.defeat {
+  color: var(--color-wrong);
+}
+
+.game-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+.win-star {
+  font-size: 3rem;
+  color: gold;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.piano,
+.secondary-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.piano {
+  background-color: var(--color-correct);
+  color: white;
+}
+
+.piano:hover {
+  background-color: red;
+  transform: translateY(-2px);
+}
+
+.secondary-button {
+  background-color: var(--color-wrong);
+  color: white;
+}
+
+.secondary-button:hover {
+  background-color: #4a4a4c;
+  transform: translateY(-2px);
 }

@@ -15,6 +15,18 @@ export class GameController {
     this.model = model;
     this.view = view;
     this.bindEvents();
+
+    document.addEventListener('gameReset', () => {
+      this.model.isAnimationRunning = true;
+      this.clearAllTimeouts();
+
+      this.model.reset();
+      this.view.reset();
+
+      setTimeout(() => {
+        this.model.isAnimationRunning = false;
+      }, 100);
+    });
   }
 
   public init(): void {

@@ -151,26 +151,67 @@ export class BoardView {
   }
 
   public showGameOver(state: GameState): void {
+    this.removeModal();
+
     const modalElement = document.createElement('div');
     modalElement.classList.add('modal');
 
-    const message =
-      state.allAnswers[state.allAnswers.length - 1] === state.correctAnswer
-        ? 'Congratulations!'
-        : `The answer was: ${state.correctAnswer.toUpperCase()}`;
+    const isWin =
+      state.allAnswers[state.allAnswers.length - 1] === state.correctAnswer;
 
-    modalElement.innerHTML = `
+    const attempts = state.allAnswers.length;
+    const attemptsText = attempts === 1 ? '1 attempt' : `${attempts} attempts`;
+
+    const modalContent = `
       <div class="modal-content">
-        <h2>${message}</h2>
-        <button id="play-again">Play Again</button>
+        ${
+          isWin
+            ? `<h2 class="victory">You won!</h2>
+             <p>You solved the puzzle in ${attemptsText}.</p>`
+            : `<h2 class="defeat">Game Over</h2>
+             <p>The answer was: <strong>${state.correctAnswer.toUpperCase()}</strong></p>`
+        }
+        
+        <div class="game-stats">
+          <div class="stat">
+            <span class="stat-value">${attempts}</span>
+            <span class="stat-label">Tries</span>
+          </div>
+        
+        </div>
+        
+        <div class="modal-buttons">
+          <button id="play-again" class="secondary-button">Play Again</button>
+          <button id="close-modal" class="secondary-button">Close</button>
+        </div>
       </div>
     `;
 
+    modalElement.innerHTML = modalContent;
     document.body.appendChild(modalElement);
 
-    document.querySelector('#play-again')?.addEventListener('click', () => {
-      modalElement.remove();
-      document.querySelector('#reset')?.dispatchEvent(new Event('click'));
+    modalElement.querySelector('#play-again')?.addEventListener('click', () => {
+      this.removeModal();
+      document.dispatchEvent(new CustomEvent('gameReset'));
     });
+
+    modalElement
+      .querySelector('#close-modal')
+      ?.addEventListener('click', () => {
+        this.removeModal();
+      });
+
+    modalElement.addEventListener('click', (e) => {
+      if (e.target === modalElement) {
+        this.removeModal();
+      }
+    });
+  }
+
+  private removeModal(): void {
+    const existingModal = document.querySelector('.modal');
+    if (existingModal) {
+      existingModal.remove();
+    }
   }
 }
