@@ -21,17 +21,6 @@ body {
   padding: 0;
 }
 
-header {
-  width: 100vw;
-  border-bottom: solid 1px var(--color-accent);
-}
-
-h1 {
-  font-size: 2em;
-  line-height: 1.1;
-  text-align: center;
-}
-
 #board {
   text-align: center;
   width: fit-content;
@@ -119,24 +108,61 @@ h1 {
   aspect-ratio: 2/1;
 }
 
-#reset {
+/* Rounded Arrow Reset Button */
+.reset-button {
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 1rem;
-  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
   border: none;
-  margin: 1rem auto;
-  font-size: 1.5rem;
-  font-weight: bold;
-  background-color: var(--color-main);
-  color: var(--color-background);
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  margin-inline-end: 48px;
 }
 
-#reset:hover {
-  cursor: pointer;
-  transition: background-color 100ms ease-in-out;
-  background-color: var(--color-accent);
-  color: var(--color-main);
+.reset-button:hover {
+  background-color: var(--color-correct);
+  transform: rotate(30deg);
+}
+
+.reset-button:active {
+  transform: rotate(60deg) scale(0.95);
+}
+
+.reset-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+header {
+  width: 100%;
+  border-bottom: solid 1px var(--color-accent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+
+header > div {
+  flex: 1;
+  display: flex;
+}
+
+header > div:last-child {
+  justify-content: flex-end;
+}
+
+h1 {
+  font-size: 2em;
+  line-height: 1.1;
+  text-align: center;
+  margin: 0;
+  flex: 2;
 }
 
 modal {
@@ -398,7 +424,6 @@ modal button {
   margin-top: 1.5rem;
 }
 
-.piano,
 .secondary-button {
   padding: 0.75rem 1.5rem;
   border: none;
@@ -410,22 +435,16 @@ modal button {
   flex: 1;
 }
 
-.piano {
-  background-color: var(--color-correct);
-  color: white;
+@keyframes spin {
+  from {
+    transform: rotate(30deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.piano:hover {
-  background-color: red;
-  transform: translateY(-2px);
-}
-
-.secondary-button {
-  background-color: var(--color-wrong);
-  color: white;
-}
-
-.secondary-button:hover {
-  background-color: #4a4a4c;
-  transform: translateY(-2px);
+.reset-button.spinning {
+  animation: spin 0.5s ease-in-out;
+  pointer-events: none;
 }
