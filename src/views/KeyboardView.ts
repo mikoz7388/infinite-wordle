@@ -24,6 +24,10 @@ export class KeyboardView {
         button.classList.add('key');
         button.dataset.key = key;
 
+        if (key === 'Enter' || key === 'Backspace') {
+          button.classList.add('special');
+        }
+
         if (key === 'Backspace') {
           const svg = document.createElementNS(
             'http://www.w3.org/2000/svg',

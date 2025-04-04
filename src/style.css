@@ -14,6 +14,7 @@
   color-scheme: light dark;
   color: var(--color-main);
   background-color: var(--color-background);
+  box-sizing: border-box;
 }
 
 body {
@@ -65,32 +66,25 @@ body {
   border-color: var(--color-wrong);
   background-color: var(--color-wrong);
 }
-
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
 #keyboard {
-  max-width: 500px;
-  margin: 0 auto;
+  margin: 5px;
+  flex-shrink: 0;
 }
 
 #keyboard div {
+  width: 100%;
   display: flex;
-  flex-direction: row;
   justify-content: center;
+  align-items: center;
   gap: 6px;
   margin-top: 8px;
-}
-
-#keyboard div button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-  font-size: 1.25em;
-  height: 58px;
-  min-width: 43px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 #keyboard div button[data-state='correct'] {
@@ -101,11 +95,6 @@ body {
 }
 #keyboard div button[data-state='incorrect'] {
   background-color: var(--color-accent);
-}
-
-#keyboard div:last-of-type button:last-of-type,
-#keyboard div:last-of-type button:first-of-type {
-  aspect-ratio: 2/1;
 }
 
 /* Rounded Arrow Reset Button */
@@ -140,8 +129,7 @@ body {
 }
 
 header {
-  width: 100%;
-  border-bottom: solid 1px var(--color-accent);
+  border-bottom: solid 2px var(--color-accent);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -263,14 +251,41 @@ modal button {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-transform: uppercase;
-  font-size: 1.25em;
   height: 58px;
-  min-width: 43px;
+  max-width: 43px;
+  min-width: 20px;
+  flex: 1;
+  text-transform: uppercase;
+  font-size: 1.25rem;
   font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  padding: 0;
+}
+
+.key.special {
+  max-width: 65px;
+  font-size: 1rem;
+  flex: 1.5;
+}
+@media (max-width: 450px) {
+  #keyboard {
+    margin-top: auto;
+  }
+  #board {
+    margin-top: auto;
+  }
+  .key {
+    height: 50px;
+    max-width: 35px;
+    font-size: 1rem;
+  }
+
+  .key.special {
+    max-width: 55px;
+    font-size: 0.875rem;
+  }
 }
 
 .key.correct {
@@ -313,7 +328,6 @@ modal button {
   text-align: center;
 }
 
-/* Cell color states */
 .cell.correct {
   border-color: var(--color-correct);
   background-color: var(--color-correct);
