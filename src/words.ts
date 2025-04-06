@@ -15,7 +15,6 @@ export const words = [
   'beard',
   'bills',
   'biome',
-  'birds',
   'birth',
   'bison',
   'blade',
@@ -423,5 +422,5 @@ export const words = [
   'yield',
   'young',
   'yummy',
-  'zebra'
+  'zebra',
 ];
